@@ -3,13 +3,40 @@ const SHEET_JSON_URL = 'https://script.google.com/macros/s/AKfycbxFb7IeJf1JCvqdA
 
 let allProducts = []; // Memória local para guardar todos os produtos carregados
 
+// Chave para armazenar os produtos já clicados pelo usuário
+const STORAGE_KEY = 'achados_clicados';
+
+// Função para obter a lista de IDs já clicados (do localStorage)
+function getProdutosClicados() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (!stored) return [];
+    try {
+        return JSON.parse(stored);
+    } catch(e) {
+        return [];
+    }
+}
+
+// Função para adicionar um ID à lista de clicados
+function adicionarProdutoClicado(id) {
+    const clicados = getProdutosClicados();
+    if (!clicados.includes(id)) {
+        clicados.push(id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clicados));
+    }
+}
+
+// Função para verificar se o produto já foi clicado
+function produtoJaClicado(id) {
+    return getProdutosClicados().includes(id);
+}
+
 // Função para buscar os produtos da planilha
 async function loadProducts() {
     try {
         const response = await fetch(SHEET_JSON_URL);
         const data = await response.json();
         
-        // Mapeia as 10 colunas da planilha (A até J)
         allProducts = data.values.slice(1).map(row => ({
             id: row[0],
             nome: row[1],
@@ -20,12 +47,10 @@ async function loadProducts() {
             linkAfiliado: row[6],
             tags: row[7] ? row[7].toLowerCase() : '',
             descricao: row[8] ? row[8] : '',
-            cliques: row[9] ? parseInt(row[9]) || 0 : 0 // Coluna J (Cliques)
+            cliques: row[9] ? parseInt(row[9]) || 0 : 0
         }));
 
-        // ALGORITMO: Ordena de forma decrescente para empurrar os mais clicados para o topo
         allProducts.sort((a, b) => b.cliques - a.cliques);
-
         renderProducts(allProducts);
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
@@ -33,16 +58,27 @@ async function loadProducts() {
     }
 }
 
-// Função de clique com contorno seguro para restrições de CORS
+// Função de clique com contagem única por usuário
 function realizarClique(id, linkAfiliado) {
-    // Abre o link imediatamente em aba externa para experiência fluida do usuário
+    // Abre o link imediatamente (sempre)
     window.open(linkAfiliado, '_blank');
 
-    // Envia requisição em segundo plano utilizando no-cors para evitar bloqueios de segurança
+    // Verifica se o usuário já clicou neste produto antes
+    if (produtoJaClicado(id)) {
+        // Já clicou: apenas abre o link, sem contar novo clique
+        console.log(`Produto ${id} já foi clicado por este usuário. Clique não contabilizado.`);
+        return;
+    }
+
+    // Primeiro clique: contabiliza no front-end e no back-end
+    // Marca como clicado no localStorage
+    adicionarProdutoClicado(id);
+
+    // Envia requisição em segundo plano para o Apps Script (incrementa na planilha)
     fetch(`${SHEET_JSON_URL}?id=${id}`, { method: 'POST', mode: 'no-cors' })
         .catch(err => console.error('Erro ao registrar clique na planilha:', err));
 
-    // SUPER RESPONSIVIDADE: Incrementa e reordena a tela na mesma hora sem depender do delay do servidor
+    // Atualiza o contador local e reordena os produtos
     const produtoClicado = allProducts.find(p => p.id == id);
     if (produtoClicado) {
         produtoClicado.cliques++;
@@ -51,7 +87,7 @@ function realizarClique(id, linkAfiliado) {
     }
 }
 
-// Função de renderização estruturada do Grid de cards
+// Função de renderização (inalterada)
 function renderProducts(productsToRender) {
     const grid = document.getElementById('product-grid');
     const noResults = document.getElementById('no-results');
@@ -66,7 +102,6 @@ function renderProducts(productsToRender) {
             let oldPriceHTML = '';
             let currentPriceValue = '';
 
-            // Lógica estruturada de exibição condicional de descontos e preços
             if (product.desconto && product.preco) {
                 oldPriceHTML = `<span class="old-price">R$ ${product.preco}</span><br>`;
                 currentPriceValue = product.precoPix;
@@ -99,7 +134,6 @@ function renderProducts(productsToRender) {
     }
 }
 
-// Mecanismo interno de busca otimizado
 function handleSearch() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     
@@ -112,9 +146,7 @@ function handleSearch() {
     renderProducts(filteredProducts);
 }
 
-// Assinatura dos Eventos de Interface
 document.getElementById('search-input').addEventListener('input', handleSearch);
 document.getElementById('search-button').addEventListener('click', handleSearch);
 
-// Inicialização da aplicação
 loadProducts();
