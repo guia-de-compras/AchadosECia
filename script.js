@@ -1,5 +1,5 @@
 // LINK DA SUA PLANILHA (Mantido estritamente igual)
-const SHEET_JSON_URL = 'https://achados-api-poxy.tryatsm.workers.dev/';
+const SHEET_JSON_URL = 'https://achados-api-proxy.tryatsm.workers.dev/';
 
 let allProducts = []; // Memória local para guardar todos os produtos carregados
 
