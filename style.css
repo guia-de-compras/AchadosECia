@@ -1,0 +1,270 @@
+/* Paleta de Cores e Tokens de Estilo - Dark Premium */
+:root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --accent-color: #2ecc71; /* Verde vibrante corporativo */
+    --badge-bg: #d32f2f;   /* Vermelho de conversão para desconto */
+    --border-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header Fixo de Navegação */
+header {
+    background-color: #1a1a1a;
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--accent-color);
+    white-space: nowrap;
+}
+
+.search-bar {
+    flex: 1;
+    max-width: 600px;
+    display: flex;
+    background-color: #2a2a2a;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.search-bar input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-color);
+    outline: none;
+}
+
+.search-bar button {
+    padding: 0 15px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+/* Redes Sociais no Header */
+.social-media {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.social-media a {
+    color: var(--text-color);
+    font-size: 22px;
+    transition: color 0.2s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+.social-media a:hover {
+    color: var(--accent-color);
+    transform: scale(1.1);
+}
+
+/* Grid de Exibição Responsivo */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
+}
+
+/* Cartões de Produto (Cards) */
+.product-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--border-color);
+    position: relative;
+    cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+/* Proporção 3:4 perfeita anti-distorção */
+.product-image {
+    width: 100%;
+    height: auto; 
+    aspect-ratio: 3 / 4; 
+    object-fit: cover;
+    display: block;
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--badge-bg);
+    color: white;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+.product-info {
+    padding: 15px;
+}
+
+.product-title {
+    font-size: 14px;
+    color: var(--text-color);
+    margin-bottom: 6px;
+    font-weight: bold;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-description {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Contador de Relevância Social (Cliques) */
+.product-clicks {
+    font-size: 11px;
+    color: #4caf50; 
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.price-row {
+    margin-bottom: 4px;
+}
+
+.old-price {
+    color: var(--text-muted);
+    text-decoration: line-through;
+    font-size: 12px;
+}
+
+.current-price {
+    color: var(--accent-color);
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.pix-price {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Rodapé Estilizado Uniforme */
+footer {
+    background-color: #1a1a1a;
+    padding: 25px 0;
+    border-top: 1px solid var(--border-color);
+    margin-top: 40px;
+    text-align: center;
+}
+
+.footer-content p {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* =============================================== */
+/* RESPONSIVIDADE: Cabeçalho em duas linhas para mobile */
+/* =============================================== */
+@media (max-width: 768px) {
+    .header-content {
+        display: grid;
+        grid-template-areas: 
+            "logo social"
+            "search search";
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logo {
+        grid-area: logo;
+        white-space: normal;    /* permite que o nome quebre se necessário */
+        font-size: 20px;
+        line-height: 1.2;
+    }
+
+    .social-media {
+        grid-area: social;
+        justify-self: end;
+    }
+
+    .search-bar {
+        grid-area: search;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 4px;
+    }
+
+    /* Ajustes complementares */
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        padding: 12px 0;
+    }
+
+    .search-bar input {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .social-media {
+        gap: 12px;
+    }
+
+    .social-media a {
+        font-size: 18px;
+    }
+}
